@@ -1,0 +1,32 @@
+module BaundrateGen(clk, mode, sioclk);
+	input clk;
+	input [1:0] mode;
+	output sioclk;
+
+	reg [11:0] cnt;
+	reg bclk;
+	reg [2:0] div;
+	
+	always @(posedge clk) begin
+		if(cnt==12'd1301)
+			cnt=0;
+		else
+			cnt=cnt+1;
+	end
+		
+	always @(posedge clk) begin
+		if(cnt==12'h000)
+			bclk=1'b1;
+		else
+			bclk=1'b0;
+	end
+
+	always @(posedge bclk) begin
+		div=div+1;
+	end
+	
+	assign sioclk=(mode==2'h0) ? bclk:
+		(mode==2'h1) ? div[0]:
+		(mode==2'h2) ? div[1]: div[2];
+
+endmodule
